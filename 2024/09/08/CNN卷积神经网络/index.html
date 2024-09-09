@@ -130,10 +130,12 @@
       
         <h1 id="CNN卷积神经网络"><a href="#CNN卷积神经网络" class="headerlink" title="CNN卷积神经网络"></a>CNN卷积神经网络</h1><h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p><code>卷积神经网络（Convolutional Neural Network，CNN）</code>是一种在计算机视觉领域取得了巨大成功的深度学习模型。它们的设计灵感来自于生物学中的视觉系统，旨在模拟人类视觉处理的方式。在过去的几年中，CNN已经在图像识别、目标检测、图像生成和许多其他领域取得了显著的进展，成为了计算机视觉和深度学习研究的重要组成部分。</p>
 <h2 id="什么是卷积"><a href="#什么是卷积" class="headerlink" title="什么是卷积"></a>什么是卷积</h2><p>在卷积神经网络中，卷积操作是指将一个可移动的<strong>小窗口（称为数据窗口，如下图绿色矩形）</strong>与图像进行逐元素相乘然后相加的操作。这个小窗口其实是一组固定的权重，它可以被看作是一个特定的<strong>滤波器（filter）</strong>或<strong>卷积核</strong>。这个操作的名称“卷积”，源自于这种元素级相乘和求和的过程。这一操作是卷积神经网络名字的来源。</p>
-<p><img src="hexo\source\img\7cabb107dc4fd77c9edd4fe790bfea17.png" alt="img"></p>
+<img src="7cabb107dc4fd77c9edd4fe790bfea17.png" alt="img">
+
 <p>上图这个绿色小窗就是数据窗口。简而言之，<strong>卷积操作就是用一个可移动的小窗口来提取图像中的特征</strong>，这个小窗口包含了一组特定的权重，通过与图像的不同位置进行卷积操作，网络能够学习并捕捉到不同特征的信息。</p>
 <p>下图中蓝色的框就是指一个数据窗口，红色框为卷积核（滤波器），最后得到的绿色方形就是卷积的结果（数据窗口中的数据与卷积核逐个元素相乘再求和）</p>
-<p><img src="hexo\source\img\d0172774f7e42ae2f6310b63e59b4906.gif" alt="img"></p>
+<img src="d0172774f7e42ae2f6310b63e59b4906.gif" alt="img">
+
 <h2 id="卷积神经网络层级结构"><a href="#卷积神经网络层级结构" class="headerlink" title="卷积神经网络层级结构"></a>卷积神经网络层级结构</h2><p>一个卷积神经网络主要由以下5层组成：</p>
 <ul>
 <li>数据输入层&#x2F; Input layer</li>
@@ -142,7 +144,8 @@
 <li>池化层 &#x2F; Pooling layer</li>
 <li>全连接层 &#x2F; FC layer</li>
 </ul>
-<p><img src="hexo\source\img\3c266da23107494b04b09683b8427f0e.png" alt="img"></p>
+<img src="3c266da23107494b04b09683b8427f0e.png" alt="img">
+
 <h3 id="数据输入层"><a href="#数据输入层" class="headerlink" title="数据输入层"></a>数据输入层</h3><p>该层要做的处理主要是对原始图像数据进行预处理，其中包括：</p>
 <ul>
 <li><strong>去均值</strong>：把输入数据各个维度都中心化为0，如下图所示，其目的就是把样本的中心拉回到坐标系原点上。</li>
@@ -150,9 +153,11 @@
 <li><strong>PCA&#x2F;白化</strong>：用PCA降维；白化是对数据各个特征轴上的幅度归一化</li>
 </ul>
 <p>去均值与归一化效果图：</p>
-<p><img src="hexo\source\img\v2-4c3b00f07cce0c7dccf2e4ba5e167e30_r.jpg" alt="img"></p>
+<img src="v2-4c3b00f07cce0c7dccf2e4ba5e167e30_r.jpg" alt="img">
+
 <p>去相关与白化效果图：</p>
-<p><img src="hexo\source\img\v2-229a2c9828a26d594dc854b659cfc8a5_1440w.webp" alt="img"></p>
+<img src="v2-229a2c9828a26d594dc854b659cfc8a5_1440w.webp" alt="img">
+
 <h3 id="卷积计算层"><a href="#卷积计算层" class="headerlink" title="卷积计算层"></a>卷积计算层</h3><p>这一层就是卷积神经网络最重要的一个层次，也是“卷积神经网络”的名字来源。<br>在这个卷积层，有两个关键操作：</p>
 <ul>
 <li><strong>局部关联</strong>。每个神经元看做一个滤波器(filter)</li>
@@ -164,7 +169,8 @@
 <li><strong>步幅&#x2F;stride</strong>：窗口一次滑动的长度</li>
 <li><strong>填充值&#x2F;zero-padding</strong>：在外围边缘补充若干圈0，方便从初始位置以步长为单位可以刚好滑倒末尾位置，通俗地讲就是为了总长能被步长整除。</li>
 </ul>
-<p><img src="hexo\source\img\v2-821048bfaee14d8c03cc5044e04fe336_r.jpg" alt="img"></p>
+<img src="v2-821048bfaee14d8c03cc5044e04fe336_r.jpg" alt="img">
+
 <h4 id="为什么要填充"><a href="#为什么要填充" class="headerlink" title="为什么要填充"></a>为什么要填充</h4><ol>
 <li><strong>保留边缘信息</strong>：当卷积核在图像边缘进行卷积时，如果不进行填充，边缘的像素将无法得到完整的卷积运算，因为卷积核无法完全覆盖边缘区域。通过填充，可以确保边缘像素也能被卷积核完整覆盖，从而保留更多的图像信息。</li>
 <li><strong>控制输出尺寸</strong>：填充可以控制卷积层输出的特征图（Feature Map）的尺寸。例如，通过适当的填充，可以使输出特征图的尺寸与输入图像的尺寸相同，这在某些网络结构设计中是必要的。</li>
@@ -172,15 +178,21 @@
 <li><strong>实现特定的网络结构</strong>：在某些网络结构中，为了保持输入和输出的形状匹配，或者为了实现特定的网络功能，可能需要使用填充。</li>
 </ol>
 <p>如果你的步幅为 1，而且把零填充设置为</p>
-<p><img src="hexo\source\img\v2-96a40f41090b4bb5e7ebbf0a0e186d9a_1440w.webp" alt="img"></p>
+<img src="v2-96a40f41090b4bb5e7ebbf0a0e186d9a_1440w.webp" alt="img">
+
 <p>K 是过滤器尺寸，那么输入和输出内容就总能保持一致的空间维度。</p>
 <p>计算任意给定卷积层的输出的大小的公式是</p>
-<p><img src="hexo\source\img\v2-2ea24e54873121ae877b5e7f03db8844_1440w.webp" alt="img"></p>
+<img src="v2-2ea24e54873121ae877b5e7f03db8844_1440w.webp" alt="img">
+
 <p>其中 O 是输出尺寸，K 是过滤器尺寸，P 是填充，S 是步幅。</p>
 <h3 id="激活层（非线性层）"><a href="#激活层（非线性层）" class="headerlink" title="激活层（非线性层）"></a>激活层（非线性层）</h3><p>把卷积层输出结果做非线性映射</p>
-<p><img src="hexo\source\img\v2-4f12096f7b6fb83ce6dc96b3ecf915c8_1440w.webp" alt="img"></p>
+<img src="v2-4f12096f7b6fb83ce6dc96b3ecf915c8_1440w.webp" alt="img">
+
+
+
 <p>CNN采用的激活函数一般为ReLU(The Rectified Linear Unit&#x2F;修正线性单元)，它的特点是收敛快，求梯度简单，但较脆弱，图像如下。</p>
-<p><img src="hexo\source\img\v2-a559927aa4df378c6b1a25c2cb86db5b_1440w.webp" alt="img"></p>
+<img src="v2-a559927aa4df378c6b1a25c2cb86db5b_1440w.webp" alt="img">
+
 <p><strong>激励层的实践经验：</strong></p>
 <p>①不要用sigmoid！不要用sigmoid！不要用sigmoid<br>② 首先试RELU，因为快，但要小心点<br>③ 如果2失效，请用Leaky ReLU或者Maxout<br>④ 某些情况下tanh倒是有不错的结果，但是很少</p>
 <h3 id="池化层"><a href="#池化层" class="headerlink" title="池化层"></a>池化层</h3><p>池化层夹在连续的卷积层中间， 用于压缩数据和参数的量，减小<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?q=%E8%BF%87%E6%8B%9F%E5%90%88&zhida_source=entity&is_preview=1">过拟合</a>。<br>简而言之，如<strong>果输入是图像的话，那么池化层的最主要作用就是压缩图像。</strong></p>
@@ -190,12 +202,49 @@
 <li>**<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?q=%E7%89%B9%E5%BE%81%E9%99%8D%E7%BB%B4&zhida_source=entity&is_preview=1">特征降维</a>**，我们知道一幅图像含有的信息是很大的，特征也很多，但是有些信息对于我们做图像任务时没有太多用途或者有重复，我们可以把这类<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?q=%E5%86%97%E4%BD%99%E4%BF%A1%E6%81%AF&zhida_source=entity&is_preview=1">冗余信息</a>去除，把最重要的特征抽取出来，这也是池化操作的一大作用。</li>
 <li>在一定程度上<strong>防止过拟合</strong>，更方便优化。</li>
 </ol>
-<p><img src="hexo\source\img\v2-deeacf1fc2ef42c0e41070fae4fb5381_1440w-1725865814124-32-1725865824045-34.webp" alt="img"></p>
+<img src="v2-deeacf1fc2ef42c0e41070fae4fb5381_1440w-1725865814124-32-1725865824045-34.webp" alt="img">
+
+
+
 <p>池化层用的方法有Max pooling 和 average pooling，而实际用的较多的是<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?q=Max+pooling&zhida_source=entity&is_preview=1">Max pooling</a>。这里就说一下Max pooling，其实思想非常简单。</p>
-<p><img src="hexo\source\img\v2-7b28abd70e3bc4294b2b28cc6ff348ef_1440w.webp" alt="img"></p>
+<img src="v2-7b28abd70e3bc4294b2b28cc6ff348ef_1440w.webp" alt="img">
+
+
+
 <p>对于每个2 * 2的窗口选出最大的数作为输出矩阵的相应元素的值，比如输入矩阵第一个2 * 2窗口中最大的数是6，那么输出矩阵的第一个元素就是6，如此类推。</p>
 <h3 id="全连接层"><a href="#全连接层" class="headerlink" title="全连接层"></a>全连接层</h3><p>两层之间所有神经元都有权重连接，通常全连接层在卷积神经网络尾部。也就是跟传统的<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?q=%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%A5%9E%E7%BB%8F%E5%85%83&zhida_source=entity&is_preview=1">神经网络神经元</a>的连接方式是一样的：</p>
-<p><img src="hexo\source\img\v2-9cbccaabf38a4c5c4c8494afc3556c12_1440w.webp" alt="img"></p>
+<img src="v2-9cbccaabf38a4c5c4c8494afc3556c12_1440w.webp" alt="img">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         
             <div id="toc-article">
