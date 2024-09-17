@@ -217,34 +217,202 @@
 
 
 
+<h2 id="CNN代码实现一般步骤"><a href="#CNN代码实现一般步骤" class="headerlink" title="CNN代码实现一般步骤"></a>CNN代码实现一般步骤</h2><p>在实现卷积神经网络（CNN）时，常见的步骤可以分为以下几个部分。下面我将以 Python 和 TensorFlow&#x2F;Keras 为例，介绍 CNN 的一般实现步骤：</p>
+<h3 id="1-导入必要的库"><a href="#1-导入必要的库" class="headerlink" title="1. 导入必要的库"></a>1. <strong>导入必要的库</strong></h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"><span class="keyword">from</span> tensorflow.keras <span class="keyword">import</span> datasets, layers, models</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br></pre></td></tr></table></figure>
 
+<h3 id="2-加载和预处理数据"><a href="#2-加载和预处理数据" class="headerlink" title="2. 加载和预处理数据"></a>2. <strong>加载和预处理数据</strong></h3><p>以 CIFAR-10 数据集为例，加载并预处理数据（包括归一化、划分训练集和测试集等）。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 加载CIFAR-10数据集</span></span><br><span class="line">(train_images, train_labels), (test_images, test_labels) = datasets.cifar10.load_data()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 数据归一化到0-1之间</span></span><br><span class="line">train_images, test_images = train_images / <span class="number">255.0</span>, test_images / <span class="number">255.0</span></span><br></pre></td></tr></table></figure>
 
+<h3 id="3-构建CNN模型"><a href="#3-构建CNN模型" class="headerlink" title="3. 构建CNN模型"></a>3. <strong>构建CNN模型</strong></h3><p>构建一个简单的卷积神经网络模型，包括卷积层（Conv2D）、池化层（MaxPooling2D）、全连接层（Dense）。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">model = models.Sequential()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 第1层卷积层和池化层</span></span><br><span class="line">model.add(layers.Conv2D(<span class="number">32</span>, (<span class="number">3</span>, <span class="number">3</span>), activation=<span class="string">&#x27;relu&#x27;</span>, input_shape=(<span class="number">32</span>, <span class="number">32</span>, <span class="number">3</span>)))</span><br><span class="line">model.add(layers.MaxPooling2D((<span class="number">2</span>, <span class="number">2</span>)))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 第2层卷积层和池化层</span></span><br><span class="line">model.add(layers.Conv2D(<span class="number">64</span>, (<span class="number">3</span>, <span class="number">3</span>), activation=<span class="string">&#x27;relu&#x27;</span>))</span><br><span class="line">model.add(layers.MaxPooling2D((<span class="number">2</span>, <span class="number">2</span>)))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 第3层卷积层和池化层</span></span><br><span class="line">model.add(layers.Conv2D(<span class="number">64</span>, (<span class="number">3</span>, <span class="number">3</span>), activation=<span class="string">&#x27;relu&#x27;</span>))</span><br><span class="line">model.add(layers.MaxPooling2D((<span class="number">2</span>, <span class="number">2</span>)))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 展平（Flatten）层，把3D特征图转成1D</span></span><br><span class="line">model.add(layers.Flatten())</span><br><span class="line"></span><br><span class="line"><span class="comment"># 全连接层</span></span><br><span class="line">model.add(layers.Dense(<span class="number">64</span>, activation=<span class="string">&#x27;relu&#x27;</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 输出层，10个类</span></span><br><span class="line">model.add(layers.Dense(<span class="number">10</span>))</span><br></pre></td></tr></table></figure>
 
+<h3 id="4-编译模型"><a href="#4-编译模型" class="headerlink" title="4. 编译模型"></a>4. <strong>编译模型</strong></h3><p>在编译步骤中，指定损失函数、优化器和评估指标。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">model.<span class="built_in">compile</span>(optimizer=<span class="string">&#x27;adam&#x27;</span>,</span><br><span class="line">              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=<span class="literal">True</span>),</span><br><span class="line">              metrics=[<span class="string">&#x27;accuracy&#x27;</span>])</span><br></pre></td></tr></table></figure>
 
+<h3 id="5-训练模型"><a href="#5-训练模型" class="headerlink" title="5. 训练模型"></a>5. <strong>训练模型</strong></h3><p>使用训练数据训练模型，设置训练的批次大小和训练的轮数。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">history = model.fit(train_images, train_labels, epochs=<span class="number">10</span>, </span><br><span class="line">                    validation_data=(test_images, test_labels))</span><br></pre></td></tr></table></figure>
 
+<h3 id="6-评估模型"><a href="#6-评估模型" class="headerlink" title="6. 评估模型"></a>6. <strong>评估模型</strong></h3><p>使用测试数据评估模型的准确性。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">test_loss, test_acc = model.evaluate(test_images, test_labels, verbose=<span class="number">2</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;\n测试准确率: <span class="subst">&#123;test_acc&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
 
+<h3 id="7-可视化训练过程"><a href="#7-可视化训练过程" class="headerlink" title="7. 可视化训练过程"></a>7. <strong>可视化训练过程</strong></h3><p>可以使用 Matplotlib 来可视化训练过程中的准确率和损失变化。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">plt.plot(history.history[<span class="string">&#x27;accuracy&#x27;</span>], label=<span class="string">&#x27;训练准确率&#x27;</span>)</span><br><span class="line">plt.plot(history.history[<span class="string">&#x27;val_accuracy&#x27;</span>], label=<span class="string">&#x27;验证准确率&#x27;</span>)</span><br><span class="line">plt.xlabel(<span class="string">&#x27;Epoch&#x27;</span>)</span><br><span class="line">plt.ylabel(<span class="string">&#x27;Accuracy&#x27;</span>)</span><br><span class="line">plt.legend(loc=<span class="string">&#x27;lower right&#x27;</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
 
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><ol>
+<li><strong>加载数据</strong>：准备数据并进行预处理。</li>
+<li><strong>构建模型</strong>：搭建卷积层、池化层、全连接层等。</li>
+<li><strong>编译模型</strong>：指定损失函数和优化器。</li>
+<li><strong>训练模型</strong>：通过数据训练模型。</li>
+<li><strong>评估模型</strong>：用测试集评估模型性能。</li>
+<li><strong>可视化结果</strong>：查看训练过程中模型的表现。</li>
+</ol>
+<p>这就是实现卷积神经网络的一般步骤。可以根据需要增加模型的复杂度或改变超参数来优化模型。</p>
+<h2 id="1D-CNN"><a href="#1D-CNN" class="headerlink" title="1D-CNN"></a>1D-CNN</h2><p>1D卷积神经网络（1D-CNN）是一种处理一维序列数据的深度学习模型。它广泛应用于时间序列数据、自然语言处理、音频信号处理等领域。</p>
+<h3 id="1-输入数据"><a href="#1-输入数据" class="headerlink" title="1. 输入数据"></a>1. <strong>输入数据</strong></h3><p>1D-CNN 的输入是一个一维的序列数据，通常形状为 <code>(batch_size, sequence_length, channels)</code>，其中：</p>
+<ul>
+<li><code>batch_size</code>：一次性输入的样本数。</li>
+<li><code>sequence_length</code>：输入序列的长度，例如时间序列数据的时间步长或文本中的单词数量。</li>
+<li><code>channels</code>：输入数据的维度，例如时间序列中可以是不同传感器的数据，文本中可以是词向量的维度。</li>
+</ul>
+<h3 id="2-卷积操作"><a href="#2-卷积操作" class="headerlink" title="2. 卷积操作"></a>2. <strong>卷积操作</strong></h3><p>1D卷积的本质是在一维数据上滑动卷积核（过滤器），并对局部区域进行特征提取。具体过程如下：</p>
+<ul>
+<li><strong>卷积核（kernel&#x2F;filter）</strong>：一个大小为 <code>k</code> 的窗口，会滑动经过输入序列，并在每次滑动时计算输入和卷积核的逐点乘积和。</li>
+<li><strong>滑动窗口</strong>：卷积核从输入数据的一端开始，以设定的步长（stride）向右滑动，依次计算出一系列的卷积结果（称为特征图，feature map）。</li>
+<li><strong>输出特征图</strong>：每个卷积核在输入数据上滑动并计算输出，结果是一个新的序列，称为特征图。多个卷积核可以提取不同的特征，产生多个特征图。</li>
+</ul>
+<p>公式上可以表示为：<br>$$<br>{output}[i] &#x3D; \sum_{j&#x3D;1}^{k} \text{input}[i+j] \times \text{kernel}[j]<br>$$<br>其中，<code>i</code> 表示卷积窗口的起始位置，<code>k</code> 是卷积核的大小。</p>
+<h3 id="3-激活函数"><a href="#3-激活函数" class="headerlink" title="3. 激活函数"></a>3. <strong>激活函数</strong></h3><p>卷积后的特征图通常会经过一个非线性激活函数（例如 ReLU），来引入非线性特性，提高模型的表达能力。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">output = tf.nn.relu(conv_output)</span><br></pre></td></tr></table></figure>
 
+<h3 id="4-池化操作（可选）"><a href="#4-池化操作（可选）" class="headerlink" title="4. 池化操作（可选）"></a>4. <strong>池化操作（可选）</strong></h3><p>1D-CNN 中通常使用池化操作（如最大池化 <code>max pooling</code> 或平均池化 <code>average pooling</code>），通过取窗口中的最大值或平均值来对特征进行下采样，减少数据维度，保留重要信息，同时防止过拟合。池化的窗口也是一维的，通常设定为固定大小。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pooled_output = tf.layers.max_pooling1d(output, pool_size=<span class="number">2</span>, strides=<span class="number">2</span>)</span><br></pre></td></tr></table></figure>
 
+<h3 id="5-多层卷积"><a href="#5-多层卷积" class="headerlink" title="5. 多层卷积"></a>5. <strong>多层卷积</strong></h3><p>1D-CNN 通常由多个卷积层堆叠而成，上一层的输出特征图作为下一层的输入，进一步提取特征。每一层的卷积核数量通常会增加，从而提取更多的特征。</p>
+<h3 id="6-全连接层与分类层"><a href="#6-全连接层与分类层" class="headerlink" title="6. 全连接层与分类层"></a>6. <strong>全连接层与分类层</strong></h3><p>在卷积层的最后，1D-CNN 输出的特征图会通过一个全连接层（fully connected layer，FC）或多层感知器（MLP）进行进一步处理，通常用来进行分类、回归等任务。为了进行分类，最后的输出维度会设置为分类的类别数，并可能通过 softmax 函数将输出转化为概率分布。</p>
+<h3 id="7-损失函数与优化"><a href="#7-损失函数与优化" class="headerlink" title="7. 损失函数与优化"></a>7. <strong>损失函数与优化</strong></h3><p>在分类任务中，1D-CNN 最终的输出会与真实标签计算损失（例如交叉熵损失），然后通过反向传播算法更新网络中的参数，优化模型的性能。</p>
+<h3 id="1D-CNN-工作流程总结"><a href="#1D-CNN-工作流程总结" class="headerlink" title="1D-CNN 工作流程总结"></a>1D-CNN 工作流程总结</h3><ol>
+<li><strong>输入</strong>：输入序列数据，如时间序列、文本数据等。</li>
+<li><strong>卷积</strong>：卷积核滑动提取局部特征。</li>
+<li><strong>激活</strong>：使用激活函数（如 ReLU）引入非线性。</li>
+<li><strong>池化（可选）</strong>：下采样特征图，减少维度。</li>
+<li><strong>多层卷积</strong>：重复堆叠卷积层，提取高级特征。</li>
+<li><strong>全连接层</strong>：将提取的特征用于分类或回归任务。</li>
+<li><strong>输出</strong>：分类或回归的结果，应用损失函数优化模型。</li>
+</ol>
+<h3 id="示例代码"><a href="#示例代码" class="headerlink" title="示例代码"></a>示例代码</h3><p>以下是一个简单的 1D-CNN 的实现示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义1D-CNN模型</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">cnn_1d_model</span>(<span class="params">input_shape, num_classes</span>):</span><br><span class="line">    model = tf.keras.models.Sequential([</span><br><span class="line">        tf.keras.layers.Conv1D(filters=<span class="number">64</span>, kernel_size=<span class="number">3</span>, activation=<span class="string">&#x27;relu&#x27;</span>, input_shape=input_shape),</span><br><span class="line">        tf.keras.layers.MaxPooling1D(pool_size=<span class="number">2</span>),</span><br><span class="line">        tf.keras.layers.Conv1D(filters=<span class="number">128</span>, kernel_size=<span class="number">3</span>, activation=<span class="string">&#x27;relu&#x27;</span>),</span><br><span class="line">        tf.keras.layers.MaxPooling1D(pool_size=<span class="number">2</span>),</span><br><span class="line">        tf.keras.layers.Flatten(),</span><br><span class="line">        tf.keras.layers.Dense(<span class="number">64</span>, activation=<span class="string">&#x27;relu&#x27;</span>),</span><br><span class="line">        tf.keras.layers.Dense(num_classes, activation=<span class="string">&#x27;softmax&#x27;</span>)</span><br><span class="line">    ])</span><br><span class="line">    </span><br><span class="line">    model.<span class="built_in">compile</span>(optimizer=<span class="string">&#x27;adam&#x27;</span>, loss=<span class="string">&#x27;sparse_categorical_crossentropy&#x27;</span>, metrics=[<span class="string">&#x27;accuracy&#x27;</span>])</span><br><span class="line">    <span class="keyword">return</span> model</span><br><span class="line"></span><br><span class="line"><span class="comment"># 输入形状 (sequence_length, channels)，假设序列长度为100，特征维度为10</span></span><br><span class="line">input_shape = (<span class="number">100</span>, <span class="number">10</span>)</span><br><span class="line">num_classes = <span class="number">5</span></span><br><span class="line"></span><br><span class="line">model = cnn_1d_model(input_shape, num_classes)</span><br><span class="line">model.summary()</span><br></pre></td></tr></table></figure>
 
+<h3 id="应用领域"><a href="#应用领域" class="headerlink" title="应用领域"></a>应用领域</h3><ul>
+<li><strong>时间序列分析</strong>：如股票数据、传感器数据、心电图（ECG）信号。</li>
+<li><strong>自然语言处理</strong>：文本分类、情感分析等任务。</li>
+<li><strong>音频处理</strong>：如语音识别中的声学特征提取。</li>
+</ul>
+<p>1D-CNN 通过对一维序列数据的局部特征提取和特征组合，在许多应用中表现出色。</p>
+<h2 id="2D-CNN"><a href="#2D-CNN" class="headerlink" title="2D-CNN"></a>2D-CNN</h2><p>2D卷积神经网络（2D-CNN）是处理二维数据的深度学习模型，特别适合处理图像、视频帧等二维结构的数据。它在计算机视觉任务（如图像分类、目标检测和分割）中广泛应用。以下是2D-CNN的详细过程：</p>
+<h3 id="1-输入数据-1"><a href="#1-输入数据-1" class="headerlink" title="1. 输入数据"></a>1. <strong>输入数据</strong></h3><p>2D-CNN 的输入通常是二维数据，常见于图像。输入的形状一般为 <code>(batch_size, height, width, channels)</code>，其中：</p>
+<ul>
+<li><code>batch_size</code>：一次性处理的样本数。</li>
+<li><code>height</code> 和 <code>width</code>：图像的高度和宽度。</li>
+<li><code>channels</code>：通道数，如灰度图的通道数为1，RGB图像的通道数为3。</li>
+</ul>
+<p>例如，输入可能是 <code>28x28</code> 的灰度图像，形状为 <code>(batch_size, 28, 28, 1)</code>。</p>
+<h3 id="2-卷积操作-1"><a href="#2-卷积操作-1" class="headerlink" title="2. 卷积操作"></a>2. <strong>卷积操作</strong></h3><p>卷积操作是 CNN 的核心，通过卷积核（filter）对输入图像进行局部特征提取。卷积操作通过将一个小窗口在输入图像上滑动，并计算其与窗口内数据的点积来生成输出特征图（feature map）。</p>
+<h4 id="卷积步骤"><a href="#卷积步骤" class="headerlink" title="卷积步骤"></a><strong>卷积步骤</strong></h4><ul>
+<li><strong>卷积核（kernel&#x2F;filter）</strong>：通常大小为 <code>k x k</code> 的二维矩阵（如 <code>3x3</code> 或 <code>5x5</code>），在输入图像上滑动。</li>
+<li><strong>滑动窗口</strong>：卷积核从左上角开始，按照指定的步长（stride）在图像上滑动，生成每个局部区域的卷积输出。滑动的步长决定了特征图的输出大小。</li>
+<li><strong>输出特征图</strong>：卷积操作在整个输入图像上滑动，输出一个新的二维特征图。多个卷积核可以提取不同的特征，因此会输出多个特征图。</li>
+</ul>
+<p>卷积操作的公式如下：<br>$$<br>{output}(i, j) &#x3D; \sum_{m&#x3D;1}^{k} \sum_{n&#x3D;1}^{k} \text{input}(i+m, j+n) \times \text{kernel}(m, n)<br>$$<br> 其中 <code>i, j</code> 是卷积核在输入图像上的位置。</p>
+<h4 id="填充（Padding）"><a href="#填充（Padding）" class="headerlink" title="填充（Padding）"></a><strong>填充（Padding）</strong></h4><ul>
+<li><strong>valid padding</strong>：不使用填充，卷积核只能滑动到图像的边界内，输出特征图的尺寸小于原图。</li>
+<li><strong>same padding</strong>：在图像的边缘添加零填充，使得卷积操作后输出特征图的尺寸与输入图像相同。</li>
+</ul>
+<h3 id="3-激活函数-1"><a href="#3-激活函数-1" class="headerlink" title="3. 激活函数"></a>3. <strong>激活函数</strong></h3><p>卷积后的特征图通常通过激活函数（如 ReLU）来引入非线性，激活函数作用在每个卷积输出的元素上。ReLU（Rectified Linear Unit）的常用公式是：<br>$$<br>f(x)&#x3D;max⁡(0,x)<br>$$<br> ReLU 将负值置为 0，保持正值不变，提高了模型的非线性表达能力。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conv_output = tf.nn.relu(conv_output)</span><br></pre></td></tr></table></figure>
 
+<h3 id="4-池化操作（Pooling）"><a href="#4-池化操作（Pooling）" class="headerlink" title="4. 池化操作（Pooling）"></a>4. <strong>池化操作（Pooling）</strong></h3><p>池化操作通过下采样的方式减少特征图的尺寸，从而减少模型计算量和防止过拟合。常见的池化方法有 <strong>最大池化（Max Pooling）</strong> 和 <strong>平均池化（Average Pooling）</strong>。</p>
+<ul>
+<li><strong>最大池化</strong>：取窗口内的最大值。</li>
+<li><strong>平均池化</strong>：取窗口内所有值的平均值。</li>
+</ul>
+<p>池化窗口大小通常为 <code>2x2</code>，步长为2，这样每次池化会将特征图的大小减半。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pooled_output = tf.nn.max_pool(conv_output, ksize=[<span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">1</span>], strides=[<span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">1</span>], padding=<span class="string">&#x27;SAME&#x27;</span>)</span><br></pre></td></tr></table></figure>
 
+<h3 id="5-多层卷积-1"><a href="#5-多层卷积-1" class="headerlink" title="5. 多层卷积"></a>5. <strong>多层卷积</strong></h3><p>2D-CNN 通常由多层卷积和池化层堆叠而成。每层卷积可以提取更高级的特征：</p>
+<ul>
+<li>第一层卷积可能提取边缘、角等低级特征。</li>
+<li>随着层数加深，后续层能够提取更加复杂的特征，如物体的形状和结构。</li>
+</ul>
+<p>每一层卷积后的特征图通常会随着通道数增加，但空间维度（高度和宽度）通常会通过池化逐渐减小。</p>
+<h3 id="6-全连接层（Fully-Connected-Layer-FC）"><a href="#6-全连接层（Fully-Connected-Layer-FC）" class="headerlink" title="6. 全连接层（Fully Connected Layer, FC）"></a>6. <strong>全连接层（Fully Connected Layer, FC）</strong></h3><p>在卷积层之后，通常会将2D特征图展平（Flatten），转化为一维向量，并通过全连接层进行分类或回归任务。</p>
+<ul>
+<li><strong>展平</strong>：将二维的特征图转换为一维向量，方便全连接层处理。</li>
+<li><strong>全连接层</strong>：将展平的特征输入到全连接层，经过线性变换后输出最终的分类结果。最后一层的输出维度与类别数相等，表示每个类别的预测分数。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">flattened = tf.layers.flatten(pooled_output)</span><br><span class="line">fc = tf.layers.dense(flattened, units=<span class="number">128</span>, activation=tf.nn.relu)</span><br><span class="line">logits = tf.layers.dense(fc, units=num_classes)</span><br></pre></td></tr></table></figure>
 
+<h3 id="7-损失函数与优化-1"><a href="#7-损失函数与优化-1" class="headerlink" title="7. 损失函数与优化"></a>7. <strong>损失函数与优化</strong></h3><p>对于分类任务，最后一层通常输出一个类别数的向量，通过 <strong>softmax</strong> 函数将其转化为概率分布：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">predictions = tf.nn.softmax(logits)</span><br></pre></td></tr></table></figure>
 
+<p>损失函数通常使用交叉熵损失，通过反向传播和优化器（如 Adam 或 SGD）来优化模型。</p>
+<h3 id="2D-CNN-工作流程总结"><a href="#2D-CNN-工作流程总结" class="headerlink" title="2D-CNN 工作流程总结"></a>2D-CNN 工作流程总结</h3><ol>
+<li><strong>输入</strong>：二维数据，如图像。</li>
+<li><strong>卷积层</strong>：提取局部特征，卷积核在图像上滑动。</li>
+<li><strong>激活函数</strong>：如 ReLU 引入非线性。</li>
+<li><strong>池化层</strong>：下采样特征图，减少维度。</li>
+<li><strong>多层卷积与池化</strong>：堆叠多个卷积和池化层提取高级特征。</li>
+<li><strong>展平与全连接层</strong>：将特征图展平，输入全连接层。</li>
+<li><strong>输出层</strong>：通过 softmax 等进行分类，输出类别概率。</li>
+</ol>
+<h3 id="示例代码-1"><a href="#示例代码-1" class="headerlink" title="示例代码"></a>示例代码</h3><p>以下是一个简单的2D-CNN实现示例，用于处理输入的图像数据：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义2D-CNN模型</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">cnn_2d_model</span>(<span class="params">input_shape, num_classes</span>):</span><br><span class="line">    model = tf.keras.models.Sequential([</span><br><span class="line">        tf.keras.layers.Conv2D(filters=<span class="number">32</span>, kernel_size=(<span class="number">3</span>, <span class="number">3</span>), activation=<span class="string">&#x27;relu&#x27;</span>, input_shape=input_shape),</span><br><span class="line">        tf.keras.layers.MaxPooling2D(pool_size=(<span class="number">2</span>, <span class="number">2</span>)),</span><br><span class="line">        tf.keras.layers.Conv2D(filters=<span class="number">64</span>, kernel_size=(<span class="number">3</span>, <span class="number">3</span>), activation=<span class="string">&#x27;relu&#x27;</span>),</span><br><span class="line">        tf.keras.layers.MaxPooling2D(pool_size=(<span class="number">2</span>, <span class="number">2</span>)),</span><br><span class="line">        tf.keras.layers.Flatten(),</span><br><span class="line">        tf.keras.layers.Dense(<span class="number">128</span>, activation=<span class="string">&#x27;relu&#x27;</span>),</span><br><span class="line">        tf.keras.layers.Dense(num_classes, activation=<span class="string">&#x27;softmax&#x27;</span>)</span><br><span class="line">    ])</span><br><span class="line">    </span><br><span class="line">    model.<span class="built_in">compile</span>(optimizer=<span class="string">&#x27;adam&#x27;</span>, loss=<span class="string">&#x27;sparse_categorical_crossentropy&#x27;</span>, metrics=[<span class="string">&#x27;accuracy&#x27;</span>])</span><br><span class="line">    <span class="keyword">return</span> model</span><br><span class="line"></span><br><span class="line"><span class="comment"># 假设输入形状为28x28的灰度图，通道数为1，类别数为10</span></span><br><span class="line">input_shape = (<span class="number">28</span>, <span class="number">28</span>, <span class="number">1</span>)</span><br><span class="line">num_classes = <span class="number">10</span></span><br><span class="line"></span><br><span class="line">model = cnn_2d_model(input_shape, num_classes)</span><br><span class="line">model.summary()</span><br></pre></td></tr></table></figure>
 
+<h3 id="应用领域-1"><a href="#应用领域-1" class="headerlink" title="应用领域"></a>应用领域</h3><ul>
+<li><strong>图像分类</strong>：如手写数字识别（MNIST）、物体识别（CIFAR-10）。</li>
+<li><strong>目标检测</strong>：如人脸检测、行人检测等。</li>
+<li><strong>图像分割</strong>：如医学图像的病灶区域分割。</li>
+</ul>
+<p>2D-CNN 通过局部卷积提取图像中的层级特征，逐步缩小空间维度，保留重要的高层次语义信息，在图像处理中取得了显著的成功。</p>
+<h2 id="3D-CNN"><a href="#3D-CNN" class="headerlink" title="3D-CNN"></a>3D-CNN</h2><p>3D卷积神经网络（3D-CNN）是处理三维数据的深度学习模型，常用于视频处理、医学图像（如CT、MRI扫描）和体素数据等领域。与2D-CNN不同，3D-CNN的卷积操作在三维空间中进行，能够捕捉数据的空间和时间上的特征。以下是3D-CNN的详细过程：</p>
+<h3 id="1-输入数据-2"><a href="#1-输入数据-2" class="headerlink" title="1. 输入数据"></a>1. <strong>输入数据</strong></h3><p>3D-CNN的输入通常是三维数据，常见于视频或医学图像。输入的形状一般为 <code>(batch_size, depth, height, width, channels)</code>，其中：</p>
+<ul>
+<li><code>batch_size</code>：一次性处理的样本数。</li>
+<li><code>depth</code>：深度，表示输入数据的第三个维度，例如视频的帧数、体素数据的深度等。</li>
+<li><code>height</code> 和 <code>width</code>：高度和宽度，表示输入的二维空间维度。</li>
+<li><code>channels</code>：通道数，表示输入数据的通道数（如RGB图像的通道数为3）。</li>
+</ul>
+<p>例如，输入可能是 <code>16x128x128</code> 的体积数据（深度16，宽度128，高度128），形状为 <code>(batch_size, 16, 128, 128, 1)</code>。</p>
+<h3 id="2-卷积操作-2"><a href="#2-卷积操作-2" class="headerlink" title="2. 卷积操作"></a>2. <strong>卷积操作</strong></h3><p>3D卷积操作与2D卷积类似，不同之处在于它在三维空间中滑动卷积核，提取局部的体积特征。卷积核在<code>depth</code>、<code>height</code>、<code>width</code>三个维度上滑动，产生三维的特征图。</p>
+<h4 id="卷积步骤-1"><a href="#卷积步骤-1" class="headerlink" title="卷积步骤"></a><strong>卷积步骤</strong></h4><ul>
+<li><strong>卷积核（kernel&#x2F;filter）</strong>：大小为 <code>k x k x k</code> 的三维矩阵（例如 <code>3x3x3</code> 或 <code>5x5x5</code>），在输入的体积数据上滑动，生成输出特征图。</li>
+<li><strong>滑动窗口</strong>：卷积核在三维输入数据上滑动，按照指定的步长（stride）进行移动，步长可以在三维空间内控制移动的步幅。</li>
+<li><strong>输出特征图</strong>：每次滑动后，将局部的输入数据与卷积核计算点积，生成一个输出值。整个卷积过程结束后，会生成三维的特征图。</li>
+</ul>
+<p>公式上，3D卷积的操作可以表示为：<br>$$<br>{output}(i, j, k) &#x3D; \sum_{d&#x3D;1}^{D} \sum_{h&#x3D;1}^{H} \sum_{w&#x3D;1}^{W} \text{input}(i+d, j+h, k+w) \times \text{kernel}(d, h, w)<br>$$<br>其中，<code>i, j, k</code> 是卷积核在输入数据上的位置，<code>D, H, W</code> 分别是卷积核的深度、高度和宽度。</p>
+<h4 id="填充（Padding）-1"><a href="#填充（Padding）-1" class="headerlink" title="填充（Padding）"></a><strong>填充（Padding）</strong></h4><ul>
+<li><strong>valid padding</strong>：不使用填充，卷积核只能滑动到数据的边界内，输出的特征图比输入数据尺寸小。</li>
+<li><strong>same padding</strong>：在输入数据的边缘添加零填充，确保输出特征图的尺寸与输入相同。</li>
+</ul>
+<h3 id="3-激活函数-2"><a href="#3-激活函数-2" class="headerlink" title="3. 激活函数"></a>3. <strong>激活函数</strong></h3><p>卷积后的特征图通常会通过一个激活函数（如 ReLU）引入非线性。ReLU（Rectified Linear Unit）是最常见的激活函数，它将负值置为 0，保持正值不变。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conv_output = tf.nn.relu(conv_output)</span><br></pre></td></tr></table></figure>
 
+<h3 id="4-池化操作（Pooling）-1"><a href="#4-池化操作（Pooling）-1" class="headerlink" title="4. 池化操作（Pooling）"></a>4. <strong>池化操作（Pooling）</strong></h3><p>在3D-CNN中，池化操作通常也在三维空间内进行，称为 <strong>3D池化（3D pooling）</strong>。它通过对体积特征的下采样，减少数据的空间和深度维度，从而减少计算量和防止过拟合。常用的池化方法有：</p>
+<ul>
+<li><strong>最大池化（Max Pooling）</strong>：取池化窗口内的最大值。</li>
+<li><strong>平均池化（Average Pooling）</strong>：取池化窗口内所有值的平均值。</li>
+</ul>
+<p>池化的窗口通常为 <code>2x2x2</code>，步长为2，这样每次池化操作会将特征图的大小减半。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pooled_output = tf.nn.max_pool3d(conv_output, ksize=[<span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">1</span>], strides=[<span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">1</span>], padding=<span class="string">&#x27;SAME&#x27;</span>)</span><br></pre></td></tr></table></figure>
 
+<h3 id="5-多层卷积-2"><a href="#5-多层卷积-2" class="headerlink" title="5. 多层卷积"></a>5. <strong>多层卷积</strong></h3><p>3D-CNN通常由多层卷积和池化层堆叠而成。每一层卷积提取的特征越来越复杂，前面的卷积层可能提取边缘、角等低级特征，而后面的层则提取更高级的特征，如物体的形状或视频中的运动模式。</p>
+<h3 id="6-全连接层（Fully-Connected-Layer-FC）-1"><a href="#6-全连接层（Fully-Connected-Layer-FC）-1" class="headerlink" title="6. 全连接层（Fully Connected Layer, FC）"></a>6. <strong>全连接层（Fully Connected Layer, FC）</strong></h3><p>在卷积层和池化层之后，输出的三维特征图会被展平（Flatten）为一维向量，并通过全连接层处理，用于分类或回归任务。</p>
+<ul>
+<li><strong>展平</strong>：将3D特征图转换为一维向量，方便后续的全连接层处理。</li>
+<li><strong>全连接层</strong>：一维向量输入到全连接层，通过线性变换后输出分类结果。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">flattened = tf.layers.flatten(pooled_output)</span><br><span class="line">fc = tf.layers.dense(flattened, units=<span class="number">128</span>, activation=tf.nn.relu)</span><br><span class="line">logits = tf.layers.dense(fc, units=num_classes)</span><br></pre></td></tr></table></figure>
 
+<h3 id="7-损失函数与优化-2"><a href="#7-损失函数与优化-2" class="headerlink" title="7. 损失函数与优化"></a>7. <strong>损失函数与优化</strong></h3><p>在分类任务中，最后的输出通常是一个类别数的向量，通过 <strong>softmax</strong> 函数将其转化为概率分布。损失函数通常使用交叉熵损失，然后通过反向传播和优化器（如Adam或SGD）来优化模型。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">predictions = tf.nn.softmax(logits)</span><br></pre></td></tr></table></figure>
 
+<h3 id="3D-CNN-工作流程总结"><a href="#3D-CNN-工作流程总结" class="headerlink" title="3D-CNN 工作流程总结"></a>3D-CNN 工作流程总结</h3><ol>
+<li><strong>输入</strong>：三维数据，如视频序列、体素数据或医学图像（CT&#x2F;MRI）。</li>
+<li><strong>卷积层</strong>：在三维数据上进行卷积操作，提取局部体积特征。</li>
+<li><strong>激活函数</strong>：如 ReLU 引入非线性。</li>
+<li><strong>池化层</strong>：对体积特征进行下采样，减少数据维度。</li>
+<li><strong>多层卷积与池化</strong>：堆叠多个卷积层，提取更高级的特征。</li>
+<li><strong>展平与全连接层</strong>：将三维特征图展平为一维向量，输入全连接层进行分类或回归。</li>
+<li><strong>输出层</strong>：通过softmax等进行分类，输出类别概率。</li>
+</ol>
+<h3 id="示例代码-2"><a href="#示例代码-2" class="headerlink" title="示例代码"></a>示例代码</h3><p>以下是一个简单的3D-CNN实现示例，用于处理输入的三维体积数据（如视频或体素数据）：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义3D-CNN模型</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">cnn_3d_model</span>(<span class="params">input_shape, num_classes</span>):</span><br><span class="line">    model = tf.keras.models.Sequential([</span><br><span class="line">        tf.keras.layers.Conv3D(filters=<span class="number">32</span>, kernel_size=(<span class="number">3</span>, <span class="number">3</span>, <span class="number">3</span>), activation=<span class="string">&#x27;relu&#x27;</span>, input_shape=input_shape),</span><br><span class="line">        tf.keras.layers.MaxPooling3D(pool_size=(<span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>)),</span><br><span class="line">        tf.keras.layers.Conv3D(filters=<span class="number">64</span>, kernel_size=(<span class="number">3</span>, <span class="number">3</span>, <span class="number">3</span>), activation=<span class="string">&#x27;relu&#x27;</span>),</span><br><span class="line">        tf.keras.layers.MaxPooling3D(pool_size=(<span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>)),</span><br><span class="line">        tf.keras.layers.Flatten(),</span><br><span class="line">        tf.keras.layers.Dense(<span class="number">128</span>, activation=<span class="string">&#x27;relu&#x27;</span>),</span><br><span class="line">        tf.keras.layers.Dense(num_classes, activation=<span class="string">&#x27;softmax&#x27;</span>)</span><br><span class="line">    ])</span><br><span class="line">    </span><br><span class="line">    model.<span class="built_in">compile</span>(optimizer=<span class="string">&#x27;adam&#x27;</span>, loss=<span class="string">&#x27;sparse_categorical_crossentropy&#x27;</span>, metrics=[<span class="string">&#x27;accuracy&#x27;</span>])</span><br><span class="line">    <span class="keyword">return</span> model</span><br><span class="line"></span><br><span class="line"><span class="comment"># 假设输入形状为16x128x128的体积数据，通道数为1，类别数为10</span></span><br><span class="line">input_shape = (<span class="number">16</span>, <span class="number">128</span>, <span class="number">128</span>, <span class="number">1</span>)</span><br><span class="line">num_classes = <span class="number">10</span></span><br><span class="line"></span><br><span class="line">model = cnn_3d_model(input_shape, num_classes)</span><br><span class="line">model.summary()</span><br></pre></td></tr></table></figure>
 
-
-
-
-
-
-
-
-
+<h3 id="应用领域-2"><a href="#应用领域-2" class="headerlink" title="应用领域"></a>应用领域</h3><ul>
+<li><strong>视频分析</strong>：如动作识别、视频分类。</li>
+<li><strong>医学图像处理</strong>：如三维CT、MRI扫描的病灶检测与分类。</li>
+<li><strong>体素数据分析</strong>：如3D建模、3D物体识别。</li>
+</ul>
+<p>3D-CNN通过对三维数据的局部卷积提取体积特征，可以捕捉空间和时间上的依赖性，特别适合处理三维或多帧数据。</p>
 
         
             <div id="toc-article">
@@ -252,7 +420,7 @@
   <div class="widget-wrap" id="toc-wrap">
     <h3 class="widget-title"><i class="fa fa-toc"></i> Contents</h3>
     <div class="widget">
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#CNN%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C"><span class="toc-text">CNN卷积神经网络</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%95%E8%A8%80"><span class="toc-text">引言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%8D%B7%E7%A7%AF"><span class="toc-text">什么是卷积</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%B1%82%E7%BA%A7%E7%BB%93%E6%9E%84"><span class="toc-text">卷积神经网络层级结构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E8%BE%93%E5%85%A5%E5%B1%82"><span class="toc-text">数据输入层</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%B7%E7%A7%AF%E8%AE%A1%E7%AE%97%E5%B1%82"><span class="toc-text">卷积计算层</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%A1%AB%E5%85%85"><span class="toc-text">为什么要填充</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BF%80%E6%B4%BB%E5%B1%82%EF%BC%88%E9%9D%9E%E7%BA%BF%E6%80%A7%E5%B1%82%EF%BC%89"><span class="toc-text">激活层（非线性层）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B1%A0%E5%8C%96%E5%B1%82"><span class="toc-text">池化层</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%A8%E8%BF%9E%E6%8E%A5%E5%B1%82"><span class="toc-text">全连接层</span></a></li></ol></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#CNN%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C"><span class="toc-text">CNN卷积神经网络</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%95%E8%A8%80"><span class="toc-text">引言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%8D%B7%E7%A7%AF"><span class="toc-text">什么是卷积</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%B1%82%E7%BA%A7%E7%BB%93%E6%9E%84"><span class="toc-text">卷积神经网络层级结构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E8%BE%93%E5%85%A5%E5%B1%82"><span class="toc-text">数据输入层</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%B7%E7%A7%AF%E8%AE%A1%E7%AE%97%E5%B1%82"><span class="toc-text">卷积计算层</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%A1%AB%E5%85%85"><span class="toc-text">为什么要填充</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BF%80%E6%B4%BB%E5%B1%82%EF%BC%88%E9%9D%9E%E7%BA%BF%E6%80%A7%E5%B1%82%EF%BC%89"><span class="toc-text">激活层（非线性层）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B1%A0%E5%8C%96%E5%B1%82"><span class="toc-text">池化层</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%A8%E8%BF%9E%E6%8E%A5%E5%B1%82"><span class="toc-text">全连接层</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CNN%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0%E4%B8%80%E8%88%AC%E6%AD%A5%E9%AA%A4"><span class="toc-text">CNN代码实现一般步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%AF%BC%E5%85%A5%E5%BF%85%E8%A6%81%E7%9A%84%E5%BA%93"><span class="toc-text">1. 导入必要的库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%8A%A0%E8%BD%BD%E5%92%8C%E9%A2%84%E5%A4%84%E7%90%86%E6%95%B0%E6%8D%AE"><span class="toc-text">2. 加载和预处理数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%9E%84%E5%BB%BACNN%E6%A8%A1%E5%9E%8B"><span class="toc-text">3. 构建CNN模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E7%BC%96%E8%AF%91%E6%A8%A1%E5%9E%8B"><span class="toc-text">4. 编译模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B"><span class="toc-text">5. 训练模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E8%AF%84%E4%BC%B0%E6%A8%A1%E5%9E%8B"><span class="toc-text">6. 评估模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-%E5%8F%AF%E8%A7%86%E5%8C%96%E8%AE%AD%E7%BB%83%E8%BF%87%E7%A8%8B"><span class="toc-text">7. 可视化训练过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1D-CNN"><span class="toc-text">1D-CNN</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E8%BE%93%E5%85%A5%E6%95%B0%E6%8D%AE"><span class="toc-text">1. 输入数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%8D%B7%E7%A7%AF%E6%93%8D%E4%BD%9C"><span class="toc-text">2. 卷积操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0"><span class="toc-text">3. 激活函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E6%B1%A0%E5%8C%96%E6%93%8D%E4%BD%9C%EF%BC%88%E5%8F%AF%E9%80%89%EF%BC%89"><span class="toc-text">4. 池化操作（可选）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E5%A4%9A%E5%B1%82%E5%8D%B7%E7%A7%AF"><span class="toc-text">5. 多层卷积</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E5%85%A8%E8%BF%9E%E6%8E%A5%E5%B1%82%E4%B8%8E%E5%88%86%E7%B1%BB%E5%B1%82"><span class="toc-text">6. 全连接层与分类层</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E4%B8%8E%E4%BC%98%E5%8C%96"><span class="toc-text">7. 损失函数与优化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1D-CNN-%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E6%80%BB%E7%BB%93"><span class="toc-text">1D-CNN 工作流程总结</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B%E4%BB%A3%E7%A0%81"><span class="toc-text">示例代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BA%94%E7%94%A8%E9%A2%86%E5%9F%9F"><span class="toc-text">应用领域</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2D-CNN"><span class="toc-text">2D-CNN</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E8%BE%93%E5%85%A5%E6%95%B0%E6%8D%AE-1"><span class="toc-text">1. 输入数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%8D%B7%E7%A7%AF%E6%93%8D%E4%BD%9C-1"><span class="toc-text">2. 卷积操作</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8D%B7%E7%A7%AF%E6%AD%A5%E9%AA%A4"><span class="toc-text">卷积步骤</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A1%AB%E5%85%85%EF%BC%88Padding%EF%BC%89"><span class="toc-text">填充（Padding）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0-1"><span class="toc-text">3. 激活函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E6%B1%A0%E5%8C%96%E6%93%8D%E4%BD%9C%EF%BC%88Pooling%EF%BC%89"><span class="toc-text">4. 池化操作（Pooling）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E5%A4%9A%E5%B1%82%E5%8D%B7%E7%A7%AF-1"><span class="toc-text">5. 多层卷积</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E5%85%A8%E8%BF%9E%E6%8E%A5%E5%B1%82%EF%BC%88Fully-Connected-Layer-FC%EF%BC%89"><span class="toc-text">6. 全连接层（Fully Connected Layer, FC）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E4%B8%8E%E4%BC%98%E5%8C%96-1"><span class="toc-text">7. 损失函数与优化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2D-CNN-%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E6%80%BB%E7%BB%93"><span class="toc-text">2D-CNN 工作流程总结</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B%E4%BB%A3%E7%A0%81-1"><span class="toc-text">示例代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BA%94%E7%94%A8%E9%A2%86%E5%9F%9F-1"><span class="toc-text">应用领域</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3D-CNN"><span class="toc-text">3D-CNN</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E8%BE%93%E5%85%A5%E6%95%B0%E6%8D%AE-2"><span class="toc-text">1. 输入数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%8D%B7%E7%A7%AF%E6%93%8D%E4%BD%9C-2"><span class="toc-text">2. 卷积操作</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8D%B7%E7%A7%AF%E6%AD%A5%E9%AA%A4-1"><span class="toc-text">卷积步骤</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A1%AB%E5%85%85%EF%BC%88Padding%EF%BC%89-1"><span class="toc-text">填充（Padding）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0-2"><span class="toc-text">3. 激活函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E6%B1%A0%E5%8C%96%E6%93%8D%E4%BD%9C%EF%BC%88Pooling%EF%BC%89-1"><span class="toc-text">4. 池化操作（Pooling）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E5%A4%9A%E5%B1%82%E5%8D%B7%E7%A7%AF-2"><span class="toc-text">5. 多层卷积</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E5%85%A8%E8%BF%9E%E6%8E%A5%E5%B1%82%EF%BC%88Fully-Connected-Layer-FC%EF%BC%89-1"><span class="toc-text">6. 全连接层（Fully Connected Layer, FC）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E4%B8%8E%E4%BC%98%E5%8C%96-2"><span class="toc-text">7. 损失函数与优化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3D-CNN-%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E6%80%BB%E7%BB%93"><span class="toc-text">3D-CNN 工作流程总结</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B%E4%BB%A3%E7%A0%81-2"><span class="toc-text">示例代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BA%94%E7%94%A8%E9%A2%86%E5%9F%9F-2"><span class="toc-text">应用领域</span></a></li></ol></li></ol></li></ol>
     </div>
   </div>
 
@@ -298,6 +466,15 @@
     </a>
   
   
+    <a href="/2024/09/13/CNN%E4%BB%A3%E7%A0%81%E5%85%A5%E9%97%A8/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">newer</strong>
+      <div class="article-nav-title">
+        
+          CNN代码入门
+        
+      </div>
+    </a>
+  
 </nav>
 
       
@@ -328,6 +505,10 @@
       <ul>
         
           <li>
+            <a href="/2024/09/13/CNN%E4%BB%A3%E7%A0%81%E5%85%A5%E9%97%A8/">CNN代码入门</a>
+          </li>
+        
+          <li>
             <a href="/2024/09/09/CNN%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">CNN卷积神经网络</a>
           </li>
         
@@ -343,10 +524,6 @@
             <a href="/2024/06/30/hexo%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8/">hexo博客使用</a>
           </li>
         
-          <li>
-            <a href="/2024/06/27/%E9%9A%8F%E5%BF%83%E8%AE%B0/">随心记</a>
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -357,7 +534,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title"><i class="fa fa-tag"></i> Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/CNN-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" style="font-size: 10px;">CNN 深度学习</a> <a href="/tags/NumPy/" style="font-size: 10px;">NumPy</a> <a href="/tags/git-%E5%AD%A6%E4%B9%A0/" style="font-size: 10px;">git 学习</a> <a href="/tags/python%E5%AD%A6%E4%B9%A0/" style="font-size: 10px;">python学习</a> <a href="/tags/%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8/" style="font-size: 10px;">博客使用</a> <a href="/tags/%E6%97%A5%E5%B8%B8%E7%A7%AF%E7%B4%AF/" style="font-size: 10px;">日常积累</a> <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" style="font-size: 10px;">深度学习</a>
+      <a href="/tags/CNN-%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/" style="font-size: 10px;">CNN 图像处理</a> <a href="/tags/CNN-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" style="font-size: 10px;">CNN 深度学习</a> <a href="/tags/NumPy/" style="font-size: 10px;">NumPy</a> <a href="/tags/git-%E5%AD%A6%E4%B9%A0/" style="font-size: 10px;">git 学习</a> <a href="/tags/python%E5%AD%A6%E4%B9%A0/" style="font-size: 10px;">python学习</a> <a href="/tags/%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8/" style="font-size: 10px;">博客使用</a> <a href="/tags/%E6%97%A5%E5%B8%B8%E7%A7%AF%E7%B4%AF/" style="font-size: 10px;">日常积累</a> <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" style="font-size: 10px;">深度学习</a>
     </div>
   </div>
 
@@ -369,7 +546,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title"><i class="fa fa-archive"></i> Archive</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/">2024年09月</a><span class="archive-list-count">8</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/">2024年09月</a><span class="archive-list-count">9</span></li></ul>
     </div>
   </div>
 
@@ -379,7 +556,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title"><i class="fa fa-tag"></i> Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CNN-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag">CNN 深度学习</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NumPy/" rel="tag">NumPy</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git-%E5%AD%A6%E4%B9%A0/" rel="tag">git 学习</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python%E5%AD%A6%E4%B9%A0/" rel="tag">python学习</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8/" rel="tag">博客使用</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%A5%E5%B8%B8%E7%A7%AF%E7%B4%AF/" rel="tag">日常积累</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag">深度学习</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CNN-%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/" rel="tag">CNN 图像处理</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CNN-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag">CNN 深度学习</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NumPy/" rel="tag">NumPy</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git-%E5%AD%A6%E4%B9%A0/" rel="tag">git 学习</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python%E5%AD%A6%E4%B9%A0/" rel="tag">python学习</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8D%9A%E5%AE%A2%E4%BD%BF%E7%94%A8/" rel="tag">博客使用</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%A5%E5%B8%B8%E7%A7%AF%E7%B4%AF/" rel="tag">日常积累</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag">深度学习</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </div>
 
